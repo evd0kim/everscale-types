@@ -76,11 +76,14 @@ rand = { version = "0.8", optional = true }
 rayon = { version = "1.10", optional = true }
 scc = { version = "2.1", optional = true }
 serde = { version = "1", features = ["derive"], optional = true }
-sha2 = "0.10"
+sha2 = { version = "0.10", optional = true }
 smallvec = { version = "1.9", features = ["union"] }
 thiserror = "2.0"
 tl-proto = { version = "0.5.3", optional = true }
 typeid = "1.0"
+
+streebog = { version = "0.10.2", optional = true }
+botan = { version = "0.11.1", features = ["vendored", "botan3"], optional = true }
 
 everscale-types-proc = { version = "=0.1.5", path = "proc" }
 everscale-types-abi-proc = { version = "=0.1.0", path = "abi-proc", optional = true }
@@ -97,13 +100,14 @@ iai-callgrind = "0.14"
 paste = "1.0.15"
 
 [features]
-default = ["base64", "serde", "models", "sync"]
+default = ["base64", "serde", "models", "sync", "sha2"]
 sync = ["dep:scc"]
 stats = []
 serde = ["dep:serde", "base64"]
 rand = ["dep:rand"]
 models = ["dep:everscale-crypto", "dep:tl-proto"]
 blake3 = ["dep:blake3"]
+gost = ["dep:streebog", "dep:botan"]
 rayon = ["dep:rayon", "blake3?/rayon"]
 arbitrary = ["dep:arbitrary"]
 abi = [
@@ -128,6 +132,8 @@ opt-level = 3
 [profile.dev.package.rand]
 opt-level = 3
 [profile.dev.package.sha2]
+opt-level = 3
+[profile.dev.package.streebog]
 opt-level = 3
 [profile.dev.package.everscale-crypto]
 opt-level = 3

@@ -1528,10 +1528,18 @@ impl ValidatorSetPRNG {
         ((range as u128 * val as u128) >> 64) as u64
     }
 
-    fn reset(&mut self) -> u64 {
-        use sha2::digest::Digest;
 
+    fn reset(&mut self) -> u64 {
+        #[cfg(not(feature = "gost"))]
+        use sha2::digest::Digest;
+        #[cfg(not(feature = "gost"))]
         let hash: [u8; 64] = sha2::Sha512::digest(self.context).into();
+
+        #[cfg(feature = "gost")]
+        use streebog::digest::Digest;
+        #[cfg(feature = "gost")]
+        let hash: [u8; 64] = streebog::Streebog512::digest(self.context).into();
+
 
         for ctx in self.context[..32].iter_mut().rev() {
             *ctx = ctx.wrapping_add(1);

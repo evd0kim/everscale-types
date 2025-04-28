@@ -5,7 +5,10 @@ use std::sync::Arc;
 use ahash::HashMap;
 use anyhow::Result;
 use serde::Deserialize;
+#[cfg(not(feature = "gost"))]
 use sha2::Digest;
+#[cfg(feature = "gost")]
+use streebog::digest::Digest;
 
 use crate::abi::value::ser::AbiSerializer;
 use crate::abi::AbiHeader;
@@ -415,7 +418,10 @@ impl Function {
         inputs: &[NamedAbiType],
         outputs: &[NamedAbiType],
     ) -> u32 {
+        #[cfg(not(feature = "gost"))]
         let mut hasher = sha2::Sha256::new();
+        #[cfg(feature = "gost")]
+        let mut hasher = streebog::Streebog256::new();
         FunctionSignatureRaw {
             abi_version,
             name,
@@ -960,7 +966,10 @@ pub struct Event {
 impl Event {
     /// Computes event id from the full event signature.
     pub fn compute_event_id(abi_version: AbiVersion, name: &str, inputs: &[NamedAbiType]) -> u32 {
+        #[cfg(not(feature = "gost"))]
         let mut hasher = sha2::Sha256::new();
+        #[cfg(feature = "gost")]
+        let mut hasher = streebog::Streebog256::new();
         EventSignatureRaw {
             abi_version,
             name,

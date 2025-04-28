@@ -58,11 +58,21 @@ pub struct Boc;
 
 impl Boc {
     /// Computes a simple SHA256 hash of the data.
+    #[cfg(not(feature = "gost"))]
     #[inline]
     pub fn file_hash(data: impl AsRef<[u8]>) -> HashBytes {
         use sha2::Digest;
 
         sha2::Sha256::digest(data).into()
+    }
+
+    /// Computes a GOST Streebog256 hash of the data.
+    #[cfg(feature = "gost")]
+    #[inline]
+    pub fn file_hash(data: impl AsRef<[u8]>) -> HashBytes {
+        use streebog::Digest;
+
+        streebog::Streebog256::digest(data).into()
     }
 
     /// Computes a Blake3 hash of the data.
