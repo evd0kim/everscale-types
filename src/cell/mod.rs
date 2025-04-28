@@ -772,9 +772,18 @@ impl From<[u8; 32]> for HashBytes {
     }
 }
 
+#[cfg(not(feature = "gost"))]
 impl From<sha2::digest::Output<sha2::Sha256>> for HashBytes {
     #[inline(always)]
     fn from(value: sha2::digest::Output<sha2::Sha256>) -> Self {
+        Self(value.into())
+    }
+}
+
+#[cfg(feature = "gost")]
+impl From<streebog::digest::Output<streebog::Streebog256>> for HashBytes {
+    #[inline(always)]
+    fn from(value: streebog::digest::Output<streebog::Streebog256>) -> Self {
         Self(value.into())
     }
 }
